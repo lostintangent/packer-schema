@@ -176,6 +176,17 @@
                 }
             }
         },
+        "postProcessor": {
+            "anyOf": [
+                { "$ref": "#/definitions/postProcessors/checksumPostProcessor" },
+                { "$ref": "#/definitions/postProcessors/compressPostProcessor" },
+                { "$ref": "#/definitions/postProcessors/dockerImportPostProcessor" },
+                { "$ref": "#/definitions/postProcessors/dockerPushPostProcessor" },
+                { "$ref": "#/definitions/postProcessors/dockerSavePostProcessor" },
+                { "$ref": "#/definitions/postProcessors/dockerTagPostProcessor" },
+                { "$ref": "#/definitions/postProcessors/localShellPostProcessor" }
+            ]
+        },
         "postProcessors": {
             "checksumPostProcessor": {
                 "description": "Post-processor for computing a checksum for your built artifacts.",
@@ -279,7 +290,7 @@
                     },
                     "login": {
                         "type": "boolean",
-                        "description": "If true, the builder will login in order to pull the image.",
+                        "description": "If true, the post-processor will login prior to pushing.",
                         "default": false
                     },
                     "login_email": {
@@ -699,16 +710,10 @@
             "type": "array",
             "description": "An array of one or more objects that defines the various post-processing steps to take with the built images.",
             "items": {
-                ""
                 "anyOf": [
                     { "type": "string" },
-                    { "$ref": "#/definitions/postProcessors/checksumPostProcessor" },
-                    { "$ref": "#/definitions/postProcessors/compressPostProcessor" },
-                    { "$ref": "#/definitions/postProcessors/dockerImportPostProcessor" },
-                    { "$ref": "#/definitions/postProcessors/dockerPushPostProcessor" },
-                    { "$ref": "#/definitions/postProcessors/dockerSavePostProcessor" },
-                    { "$ref": "#/definitions/postProcessors/dockerTagPostProcessor" },
-                    { "$ref": "#/definitions/postProcessors/localShellPostProcessor" }
+                    { "$ref": "#/definitions/postProcessor" },
+                    { "type": "array", "items": { "$ref": "#/definitions/postProcessor" } }
                 ]
             }
         },
