@@ -1,0 +1,717 @@
+{  
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "JSON schema for Packer JSON files",
+    "type": "object",
+    "required": ["builders"],
+    "definitions": {
+        "builders": {
+            "digitalOceanBuilder": {
+                "description": "Builder for creating a DigitalOcean droplets",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["api_token", "image", "region", "size", "type"],
+                "properties": {
+                    "api_token": {
+                        "type": "string",
+                        "description": "The client token to use to access your account."
+                    },
+                    "api_url": {
+                        "type": "string",
+                        "description": "Non standard api endpoint URL. Set this if you are using a DigitalOcean API compatible service."
+                    },
+                    "droplet_name": {
+                        "type": "string",
+                        "description": "The name assigned to the droplet. DigitalOcean sets the hostname of the machine to this value."
+                    },
+                    "image": {
+                        "type": "string",
+                        "description": "The name (or slug) of the base image to use. This is the image that will be used to launch a new droplet and provision it."
+                    },
+                    "private_networking": {
+                        "type": "boolean",
+                        "description": "Specifies whether to enable private networking for the droplet being created.",
+                        "default": false
+                    },
+                    "region": {
+                        "type": "string",
+                        "description": "The name of the region to launch the droplet in.",
+                        "enum": [
+                            "ams1", "ams2", "ams3",
+                            "nyc1", "nyc2", "nyc3",
+                            "lon1",
+                            "sfo1",
+                            "sgp1"
+                        ]
+                    },
+                    "size": {
+                        "type": "string",
+                        "description": "The name of the droplet size to use.",
+                        "enum": ["512mb", "1gb", "2gb", "4gb", "8gb", "16gb", "32gb", "48gb", "64gb"]
+                    },
+                    "snapshot_name": {
+                        "type": "string",
+                        "description": "The name of the resulting snapshot that will appear in your account."
+                    },
+                    "state_timeout": {
+                        "type": "string",
+                        "description": "The time to wait, as a duration string, for a droplet to enter a desired state (such as \"active\") before timing out.",
+                        "default": "6m"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Builder for creating a DigitalOcean droplets",
+                        "enum": ["digitalocean"]
+                    },
+                    "user_data": {
+                        "type": "string",
+                        "description": "User data to launch with the Droplet."
+                    },
+                    "user_data_file": {
+                        "type": "string",
+                        "description": "Path to a file that will be used for the user data when launching the Droplet."
+                    }
+                }
+            },
+            "dockerBuilder": {
+                "description": "Builder for creating a Docker image.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type"],
+                "properties": {
+                    "author": {
+                        "type": "string",
+                        "description": "Set the author (e-mail) of a commit."
+                    },
+                    "aws_access_key": {
+                        "type": "string",
+                        "description": "The AWS access key used to communicate with AWS."
+                    },
+                    "aws_secret_key": {
+                        "type": "string",
+                        "description": "The AWS secret key used to communicate with AWS."
+                    },
+                    "aws_token": {
+                        "type": "string",
+                        "description": "The AWS access token to use."
+                    },
+                    "changes": {
+                        "type": "array",
+                        "description": "Dockerfile instructions to add to the commit. Example of instructions are CMD, ENTRYPOINT, ENV, and EXPOSE.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "commit": {
+                        "type": "boolean",
+                        "description": "If true, the container will be committed to an image rather than exported."
+                    },
+                    "discard": {
+                        "type": "boolean",
+                        "description": "Throw away the container when the build is complete."
+                    },
+                    "ecr_login": {
+                        "type": "boolean",
+                        "description": "Defaults to false. If true, the builder will login in order to pull the image from Amazon EC2 Container Registry (ECR)."
+                    },
+                    "export_path": {
+                        "type": "string",
+                        "description": "The path where the final container will be exported as a tar file."
+                    },
+                    "image": {
+                        "type": "string",
+                        "description": "The base image for the Docker container that will be started."
+                    },
+                    "login": {
+                        "type": "boolean",
+                        "description": "Defaults to false. If true, the builder will login in order to pull the image."
+                    },
+                    "login_email": {
+                        "type": "string",
+                        "description": "The email to use to authenticate to login."
+                    },
+                    "login_password": {
+                        "type": "string",
+                        "description": "The password to use to authenticate to login."
+                    },
+                    "login_server": {
+                        "type": "string",
+                        "description": "The server address to login to."
+                    },
+                    "login_username": {
+                        "type": "string",
+                        "description": "The username to use to authenticate to login."
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Set a message for the commit."
+                    },
+                    "priviledged": {
+                        "type": "boolean",
+                        "description": "If true, run the docker container with the --privileged flag. This defaults to false if not set."
+                    },
+                    "pull": {
+                        "type": "boolean",
+                        "description": "If true, the configured image will be pulled using docker pull prior to use."
+                    },
+                    "run_command": {
+                        "type": "array",
+                        "description": "An array of arguments to pass to docker run in order to run the container. By default this is set to [\"-d\", \"-i\", \"-t\", \"{{.Image}}\", \"/bin/bash\"].",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "volumes": {
+                        "type": "object",
+                        "description": "A mapping of additional volumes to mount into this container. The key of the object is the host path, the value is the container path."
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Builder for creating a Docker image.",
+                        "enum": ["docker"]
+                    }
+                }
+            }
+        },
+        "postProcessors": {
+            "checksumPostProcessor": {
+                "description": "Post-processor for computing a checksum for your built artifacts.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type"],
+                "properties": {
+                    "checksum_types": {
+                        "type": "array",
+                        "description": "An array of strings of checksum types to compute.",
+                        "items": {
+                            "type": "string",
+                            "enum": ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"]
+                        }
+                    },
+                    "output": {
+                        "type": "string",
+                        "description": "Specify filename to store checksums."
+                    },
+                     "type": {
+                        "type": "string",
+                        "description": "Post-processor for computing a checksum for your built artifacts.",
+                        "enum": ["checksum"]
+                    }
+                }
+            },
+            "compressPostProcessor": {
+                "description": "Post-processor for compressing your built artifacts.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type"],
+                "properties": {
+                    "compression_level": {
+                        "type": "number",
+                        "description": "Specify the compression level, for algorithms that support it, from 1 through 9 inclusive."
+                    },
+                    "format": {
+                        "type": "string",
+                        "description": "Disable archive format autodetection and use provided string.",
+                        "enum": [".gz", ".lz4", ".tar", ".tar.gz", ".tar.lz4", ".zip"]
+                    },
+                    "keep_input_artifact": {
+                        "type": "boolean",
+                        "description": "Keep source files; defaults to false."
+                    },
+                    "output": {
+                        "type": "string",
+                        "description": "The path to save the compressed archive. The archive format is inferred from the filename."
+                    },
+                     "type": {
+                        "type": "string",
+                        "description": "Post-processor for compressing your built artifacts.",
+                        "enum": ["compress"]
+                    }
+                }
+            },
+            "dockerImportPostProcessor": {
+                "description": "Post-processor for importing an exported Docker image in order to run other post-processors on it.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["repository", "type"],
+                "properties": {
+                    "repository": {
+                        "type": "string",
+                        "description": "The repository of the imported image."
+                    },
+                    "tag": {
+                        "type": "string",
+                        "description": "The tag for the imported image. By default this is not set."
+                    },
+                     "type": {
+                        "type": "string",
+                        "enum": ["docker-import"],
+                        "description": "Post-processor for importing an exported Docker image in order to run other post-processors on it."
+                    }
+                }
+            },
+            "dockerPushPostProcessor": {
+                "description": "Post-processor for pushing a Docker image to a remote registry.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type"],
+                "properties": {
+                    "aws_access_key": {
+                        "type": "string",
+                        "description": "The AWS access key used to communicate with AWS."
+                    },
+                    "aws_secret_key": {
+                        "type": "string",
+                        "description": "The AWS secret key used to communicate with AWS."
+                    },
+                    "aws_token": {
+                        "type": "string",
+                        "description": "The AWS access token to use."
+                    },
+                     "ecr_login": {
+                        "type": "boolean",
+                        "description": "Defaults to false. If true, the builder will login in order to pull the image from Amazon EC2 Container Registry (ECR)."
+                    },
+                    "login": {
+                        "type": "boolean",
+                        "description": "Defaults to false. If true, the builder will login in order to pull the image."
+                    },
+                    "login_email": {
+                        "type": "string",
+                        "description": "The email to use to authenticate to login."
+                    },
+                    "login_password": {
+                        "type": "string",
+                        "description": "The password to use to authenticate to login."
+                    },
+                    "login_server": {
+                        "type": "string",
+                        "description": "The server address to login to."
+                    },
+                    "login_username": {
+                        "type": "string",
+                        "description": "The username to use to authenticate to login."
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": ["docker-push"],
+                        "description": "Post-processor for pushing a Docker image to a remote registry."
+                    }
+                }
+            },
+            "dockerSavePostProcessor": {
+                "description": "Post-processor for exporting a committed Docker image to a file.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["path", "type"],
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "The path to save the image (e.g. foo.tar)."
+                    },
+                     "type": {
+                        "type": "string",
+                        "description": "Post-processor for exporting a committed Docker image to a file.",
+                        "enum": ["docker-save"]
+                    }
+                }
+            },
+            "dockerTagPostProcessor": {
+                "description": "Post-processor for tagging a committed Docker image.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["repository", "type"],
+                "properties": {
+                    "force": {
+                        "type": "boolean",
+                        "description": "If true, this post-processor forcibly tag the image even if tag name is collided. Default to false."
+                    },
+                    "repository": {
+                        "type": "string",
+                        "description": "The repository of the image."
+                    },
+                    "tag": {
+                        "type": "string",
+                        "description": "The tag for the imported image. By default this is not set."
+                    },
+                     "type": {
+                        "type": "string",
+                        "description": "Post-processor for tagging a committed Docker image.",
+                        "enum": ["docker-tag"]
+                    }
+                }
+            },
+            "localShellPostProcessor": {
+                "description": "Post-processor for running a local shell script.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type"],
+                "properties": {
+                    "environment_vars": {
+                        "type": "array",
+                        "description": "An array of key/value pairs to inject prior to the execute_command. The format should be key=value.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "execute_command": {
+                        "type": "string",
+                        "description": "The command to use to execute the script. By default this is chmod +x \"{{.Script}}\"; {{.Vars}} \"{{.Script}}\"."
+                    },
+                    "inline": {
+                        "type": "array",
+                        "description": "This is an array of commands to execute.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "inline_shebang": {
+                        "type": "string",
+                        "description": "The shebang value to use when running commands specified by inline. By default, this is /bin/sh -e."
+                    },
+                    "script": {
+                        "type": "string",
+                        "description": "The path to a script to execute."
+                    },
+                    "scripts": {
+                        "type": "array",
+                        "description": "An array of scripts to execute. The scripts will be executed in the order specified.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                     "type": {
+                        "type": "string",
+                        "description": "Post-processor for running a local shell script.",
+                        "enum": ["shell-local"]
+                    }
+                }
+            }
+        },
+        "provisioners": {
+            "ansibleLocalProvisioner": {
+                "description": "Provisioner for running an Ansible playbook via local mode.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["playbook_file", "type"],
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "description": "The command to invoke ansible. Defaults to \"ansible-playbook\"."
+                    },
+                    "extra_arguments": {
+                        "type": "array",
+                        "description": "An array of extra arguments to pass to the ansible command.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "galaxy_file": {
+                        "type": "string",
+                        "description": "A requirements file which provides a way to install roles with the ansible-galaxy cli on the remote machine."
+                    },
+                    "group_vars": {
+                        "type": "string",
+                        "description": "Path to the directory containing ansible group variables on your local system to be copied to the remote machine."
+                    },
+                    "host_vars": {
+                        "type": "string",
+                        "description": "Path to the directory containing ansible host variables on your local system to be copied to the remote machine."
+                    },
+                    "inventory_file": {
+                        "type": "string",
+                        "description": "The inventory file to be used by ansible. This file must exist on your local system and will be uploaded to the remote machine."
+                    },
+                    "inventory_groups": {
+                        "type": "string",
+                        "description": "A comma-separated list of groups to which packer will assign the host 127.0.0.1."
+                    },
+                    "playbook_dir": {
+                        "type": "string",
+                        "description": "Path to the complete ansible directory structure on your local system to be copied to the remote machine as the staging_directory before all other files and directories."
+                    },
+                    "playbook_file": {
+                        "type": "string",
+                        "description": "The playbook file to be executed by ansible. This file must exist on your local system and will be uploaded to the remote machine."
+                    },
+                    "playbook_paths": {
+                        "type": "array",
+                        "description": "An array of paths to playbook files on your local system. These will be uploaded to the remote machine under staging_directory/playbooks.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "role_paths": {
+                        "type": "array",
+                        "description": "An array of paths to role directories on your local system. These will be uploaded to the remote machine under staging_directory/roles.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "staging_directory": {
+                        "type": "string",
+                        "description": "The directory where all the configuration of Ansible by Packer will be placed. By default this is \"/tmp/packer-provisioner-ansible-local\"."
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Provisioner for running an Ansible playbook via local mode.",
+                        "enum": ["ansible-local"]
+                    }
+                }
+            },
+            "ansibleRemoteProvisioner": {
+                "description": "Provisioner for running an Ansible playbook via SSH/remote mode.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["playbook_file", "type"],
+                "properties": {
+                    "ansible_env_vars": {
+                        "type": "array",
+                        "description": "Environment variables to set before running Ansible.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "command": {
+                        "type": "string",
+                        "description": "The command to invoke ansible. Defaults to \"ansible-playbook\"."
+                    },
+                    "empty_groups": {
+                        "type": "array",
+                        "description": "The groups which should be present in inventory file but remain empty.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "extra_arguments": {
+                        "type": "array",
+                        "description": "An array of extra arguments to pass to the ansible command.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "description": "The groups into which the Ansible host should be placed. When unspecified, the host is not associated with any groups.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "host_alias": {
+                        "type": "string",
+                        "description": "The alias by which the Ansible host should be known. Defaults to default."
+                    },
+                    "local_port": {
+                        "type": "string",
+                        "description": "The port on which to attempt to listen for SSH connections."
+                    },
+                    "sftp_command": {
+                        "type": "string",
+                        "description": "The command to run on the machine being provisioned by Packer to handle the SFTP protocol that Ansible will use to transfer files."
+                    },
+                    "ssh_authorized_key_file": {
+                        "type": "string",
+                        "description": "The SSH public key of the Ansible ssh_user."
+                    },
+                    "ssh_host_key_file": {
+                        "type": "string",
+                        "description": "The SSH key that will be used to run the SSH server on the host machine to forward commands to the target machine."
+                    },
+                    "use_sftp": {
+                        "type": "boolean",
+                        "description": "Whether to use SFTP."
+                    },
+                    "user": {
+                        "type": "string",
+                        "description": "The ansible_user to use. Defaults to the user running packer."
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Provisioner for running an Ansible playbook via SSH/remote mode.",
+                        "enum": ["ansible"]
+                    }
+                }
+            },
+            "fileProvisioner": {
+                "description": "Provisioner for uploading/downloading files.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["destination", "source", "type"],
+                "properties": {
+                    "destination": {
+                        "type": "string",
+                        "description": "The path where the file will be uploaded to in the machine."
+                    },
+                    "direction": {
+                        "type": "string",
+                        "description": "The direction of the file transfer.",
+                        "enum": ["download", "upload"],
+                        "default": "upload"
+                    },
+                    "source": {
+                        "type": "string",
+                        "description": "The path to a local file or directory to upload to the machine."
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Provisioner for uploading/downloading files.",
+                        "enum": ["file"]
+                    }
+                }
+            },
+            "localShellProvisioner": {
+                "description": "Provisioner for running local shell scripts.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["command", "type"],
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "description": "The command to execute."
+                    },
+                    "execute_command": {
+                        "type": "string",
+                        "description": "The command to use to execute the script.",
+                        "default": "[\"/bin/sh\", \"-c\", \"{{.Command}}\"]"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Provisioner for running local shell scripts.",
+                        "enum": ["shell-local"]
+                    }
+                }
+            },
+            "remoteShellProvisioner": {
+                "description": "Provisioner for running remote shell scripts.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["type"],
+                "oneOf": [{ "required": ["script"] }, { "required": ["inline"] }],
+                "properties": {
+                    "binary": {
+                        "type": "boolean",
+                        "description": "If true, specifies that the script(s) are binary files, and Packer should therefore not convert Windows line endings to Unix line endings (if there are any). By default this is false."
+                    },
+                    "environment_vars": {
+                        "type": "array",
+                        "description": "An array of key/value pairs to inject prior to the execute_command. The format should be key=value.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "execute_command": {
+                        "type": "string",
+                        "description": "The command to use to execute the script. By default this is chmod +x {{ .Path }}; {{ .Vars }} {{ .Path }}."
+                    },
+                    "expect_disconnect": {
+                        "type": "boolean",
+                        "description": "Defaults to true. Whether to error if the server disconnects us."
+                    },
+                    "inline": {
+                        "type": "array",
+                        "description": "This is an array of commands to execute.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "inline_shebang": {
+                        "type": "string",
+                        "description": "The shebang value to use when running commands specified by inline. By default, this is /bin/sh -e. If you're not using inline, then this configuration has no effect."
+                    },
+                    "remote_file": {
+                        "type": "string",
+                        "description": "The filename the uploaded script will have on the machine. This defaults to 'script_nnn.sh'."
+                    },
+                    "remote_folder": {
+                        "type": "string",
+                        "description": "The folder where the uploaded script will reside on the machine. This defaults to '/tmp'."
+                    },
+                    "remote_path": {
+                        "type": "string",
+                        "description": "The full path to the uploaded script will have on the machine. By default this is remote_folder/remote_file, if set this option will override both remote_folder and remote_file."
+                    },
+                    "script": {
+                        "type": "string",
+                        "description": "The path to a script to upload and execute in the machine. This path can be absolute or relative."
+                    },
+                    "scripts": {
+                        "type": "array",
+                        "description": "An array of scripts to execute.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "skip_clean": {
+                        "type": "boolean",
+                        "description": " If true, specifies that the helper scripts uploaded to the system will not be removed by Packer. This defaults to false (clean scripts from the system)."
+                    },
+                    "skip_retry_timeout": {
+                        "type": "string",
+                        "description": "The amount of time to attempt to start the remote process. By default this is 5m or 5 minutes. This setting exists in order to deal with times when SSH may restart, such as a system reboot. "
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Provisioner for running remote shell scripts.",
+                        "enum": ["shell"]
+                    }
+                }
+            }
+        }
+    },
+    "properties": {
+        "builders": {
+            "type": "array",
+            "description": "An array of one or more objects that defines the builders that will be used to create machine images for this template, and configures each of those builders.",
+
+            "additionalItems": true,
+            "minItems": 1,
+            "uniqueItems": true,
+
+            "items": {
+                "anyOf": [
+                    { "$ref": "#/definitions/builders/digitalOceanBuilder" },
+                    { "$ref": "#/definitions/builders/dockerBuilder" }                                
+                ]
+            }
+        },
+        "description": {
+            "type": "string",
+            "description": "A string providing a description of what the template does."
+        },
+        "min_packer_version": {
+            "type": "string",
+            "description": "A string that has a minimum Packer version that is required to parse the template."
+        },
+        "post-processors": {
+            "type": "array",
+            "description": "An array of one or more objects that defines the various post-processing steps to take with the built images.",
+            "items": {
+                "anyOf": [
+                    { "$ref": "#/definitions/postProcessors/checksumPostProcessor" },
+                    { "$ref": "#/definitions/postProcessors/compressPostProcessor" },
+                    { "$ref": "#/definitions/postProcessors/dockerImportPostProcessor" },
+                    { "$ref": "#/definitions/postProcessors/dockerPushPostProcessor" },
+                    { "$ref": "#/definitions/postProcessors/dockerSavePostProcessor" },
+                    { "$ref": "#/definitions/postProcessors/dockerTagPostProcessor" },
+                    { "$ref": "#/definitions/postProcessors/localShellPostProcessor" }
+                ]
+            }
+        },
+        "provisioners": {
+            "type": "array",
+            "description": "An array of one or more objects that defines the provisioners that will be used to install and configure software for the machines created by each of the builders.",
+            "items": {
+                "anyOf": [
+                    { "$ref": "#/definitions/provisioners/ansibleLocalProvisioner" },
+                    { "$ref": "#/definitions/provisioners/ansibleRemoteProvisioner" },
+                    { "$ref": "#/definitions/provisioners/fileProvisioner" },
+                    { "$ref": "#/definitions/provisioners/localShellProvisioner" },
+                    { "$ref": "#/definitions/provisioners/remoteShellProvisioner" }
+                ] 
+            }
+        },
+        "variables": {
+            "type": "object",
+            "description": "An object of one or more key/value strings that defines user variables contained in the template."
+        }
+    }
+}
