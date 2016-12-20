@@ -112,7 +112,7 @@
                     "ecr_login": {
                         "type": "boolean",
                         "description": "If true, the builder will login in order to pull the image from Amazon EC2 Container Registry (ECR).",
-                        "default": false,
+                        "default": false
                     },
                     "export_path": {
                         "type": "string",
