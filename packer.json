@@ -111,7 +111,8 @@
                     },
                     "ecr_login": {
                         "type": "boolean",
-                        "description": "Defaults to false. If true, the builder will login in order to pull the image from Amazon EC2 Container Registry (ECR)."
+                        "description": "If true, the builder will login in order to pull the image from Amazon EC2 Container Registry (ECR).",
+                        "default": false,
                     },
                     "export_path": {
                         "type": "string",
@@ -123,7 +124,8 @@
                     },
                     "login": {
                         "type": "boolean",
-                        "description": "Defaults to false. If true, the builder will login in order to pull the image."
+                        "description": "If true, the builder will login in order to pull the image.",
+                        "default": false
                     },
                     "login_email": {
                         "type": "string",
@@ -147,7 +149,8 @@
                     },
                     "priviledged": {
                         "type": "boolean",
-                        "description": "If true, run the docker container with the --privileged flag. This defaults to false if not set."
+                        "description": "If true, run the docker container with the --privileged flag.",
+                        "default": false
                     },
                     "pull": {
                         "type": "boolean",
@@ -215,7 +218,8 @@
                     },
                     "keep_input_artifact": {
                         "type": "boolean",
-                        "description": "Keep source files; defaults to false."
+                        "description": "Keep source files",
+                        "default": false
                     },
                     "output": {
                         "type": "string",
@@ -269,11 +273,13 @@
                     },
                      "ecr_login": {
                         "type": "boolean",
-                        "description": "Defaults to false. If true, the builder will login in order to pull the image from Amazon EC2 Container Registry (ECR)."
+                        "description": "If true, the builder will login in order to pull the image from Amazon EC2 Container Registry (ECR).",
+                        "default": false
                     },
                     "login": {
                         "type": "boolean",
-                        "description": "Defaults to false. If true, the builder will login in order to pull the image."
+                        "description": "If true, the builder will login in order to pull the image.",
+                        "default": false
                     },
                     "login_email": {
                         "type": "string",
@@ -396,7 +402,8 @@
                 "properties": {
                     "command": {
                         "type": "string",
-                        "description": "The command to invoke ansible. Defaults to \"ansible-playbook\"."
+                        "description": "The command to invoke ansible.",
+                        "default": "ansible-playbook"
                     },
                     "extra_arguments": {
                         "type": "array",
@@ -473,7 +480,8 @@
                     },
                     "command": {
                         "type": "string",
-                        "description": "The command to invoke ansible. Defaults to \"ansible-playbook\"."
+                        "description": "The command to invoke ansible.",
+                        "default": "ansible-playbook"
                     },
                     "empty_groups": {
                         "type": "array",
@@ -498,7 +506,8 @@
                     },
                     "host_alias": {
                         "type": "string",
-                        "description": "The alias by which the Ansible host should be known. Defaults to default."
+                        "description": "The alias by which the Ansible host should be known.",
+                        "default": "default"
                     },
                     "local_port": {
                         "type": "string",
@@ -604,7 +613,8 @@
                     },
                     "expect_disconnect": {
                         "type": "boolean",
-                        "description": "Defaults to true. Whether to error if the server disconnects us."
+                        "description": "Whether to error if the server disconnects us.",
+                        "default": true
                     },
                     "inline": {
                         "type": "array",
@@ -619,11 +629,13 @@
                     },
                     "remote_file": {
                         "type": "string",
-                        "description": "The filename the uploaded script will have on the machine. This defaults to 'script_nnn.sh'."
+                        "description": "The filename the uploaded script will have on the machine.",
+                        "default": "script_nnn.sh"
                     },
                     "remote_folder": {
                         "type": "string",
-                        "description": "The folder where the uploaded script will reside on the machine. This defaults to '/tmp'."
+                        "description": "The folder where the uploaded script will reside on the machine.",
+                        "default": "/tmp"
                     },
                     "remote_path": {
                         "type": "string",
@@ -642,7 +654,8 @@
                     },
                     "skip_clean": {
                         "type": "boolean",
-                        "description": " If true, specifies that the helper scripts uploaded to the system will not be removed by Packer. This defaults to false (clean scripts from the system)."
+                        "description": " If true, specifies that the helper scripts uploaded to the system will not be removed by Packer.",
+                        "default": false
                     },
                     "skip_retry_timeout": {
                         "type": "string",
