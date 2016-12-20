@@ -711,7 +711,7 @@
             "description": "An array of one or more objects that defines the various post-processing steps to take with the built images.",
             "items": {
                 "anyOf": [
-                    { "type": "string" },
+                    { "type": "string", "enum": ["checksum", "compress", "docker-import", "docker-push", "docker-save", "docker-tag", "shell-local"] },
                     { "$ref": "#/definitions/postProcessor" },
                     { "type": "array", "items": { "$ref": "#/definitions/postProcessor" } }
                 ]
