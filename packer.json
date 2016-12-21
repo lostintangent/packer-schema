@@ -1,9 +1,12 @@
 {  
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "JSON schema for Packer JSON files",
-    "type": "object",
-    "required": ["builders"],
     "definitions": {
+        "builder": {
+            "anyOf": [
+                { "$ref": "#/definitions/builders/digitalOceanBuilder" },
+                { "$ref": "#/definitions/builders/dockerBuilder" }                                
+            ]
+        },
         "builders": {
             "digitalOceanBuilder": {
                 "description": "Builder for creating a DigitalOcean droplets",
@@ -405,6 +408,15 @@
                 }
             }
         },
+        "provionser": {
+            "anyOf": [
+                { "$ref": "#/definitions/provisioners/ansibleLocalProvisioner" },
+                { "$ref": "#/definitions/provisioners/ansibleRemoteProvisioner" },
+                { "$ref": "#/definitions/provisioners/fileProvisioner" },
+                { "$ref": "#/definitions/provisioners/localShellProvisioner" },
+                { "$ref": "#/definitions/provisioners/remoteShellProvisioner" }
+            ] 
+        },
         "provisioners": {
             "ansibleLocalProvisioner": {
                 "description": "Provisioner for running an Ansible playbook via local mode.",
@@ -684,55 +696,42 @@
     },
     "properties": {
         "builders": {
-            "type": "array",
-            "description": "An array of one or more objects that defines the builders that will be used to create machine images for this template, and configures each of those builders.",
-
-            "additionalItems": true,
+            "description": "An array of one or more objects that define the builders that will be used to create machine images for this template, and configures each of those builders.",
+            "items": { "$ref": "#/definitions/builder" },            
             "minItems": 1,
-            "uniqueItems": true,
-
-            "items": {
-                "anyOf": [
-                    { "$ref": "#/definitions/builders/digitalOceanBuilder" },
-                    { "$ref": "#/definitions/builders/dockerBuilder" }                                
-                ]
-            }
+            "type": "array",            
+            "uniqueItems": true
         },
         "description": {
-            "type": "string",
-            "description": "A string providing a description of what the template does."
+            "description": "A string providing a description of what the template does.",
+            "type": "string"            
         },
         "min_packer_version": {
-            "type": "string",
-            "description": "A string that has a minimum Packer version that is required to parse the template."
+            "description": "A string that has a minimum Packer version that is required to parse the template.",
+            "type": "string"
         },
         "post-processors": {
-            "type": "array",
-            "description": "An array of one or more objects that defines the various post-processing steps to take with the built images.",
+            "description": "An array of one or more objects that define the various post-processing steps to take with the built images.",
             "items": {
                 "anyOf": [
                     { "type": "string", "enum": ["checksum", "compress", "docker-import", "docker-push", "docker-save", "docker-tag", "shell-local"] },
                     { "$ref": "#/definitions/postProcessor" },
                     { "type": "array", "items": { "$ref": "#/definitions/postProcessor" } }
                 ]
-            }
+            },
+            "type": "array"            
         },
         "provisioners": {
-            "type": "array",
-            "description": "An array of one or more objects that defines the provisioners that will be used to install and configure software for the machines created by each of the builders.",
-            "items": {
-                "anyOf": [
-                    { "$ref": "#/definitions/provisioners/ansibleLocalProvisioner" },
-                    { "$ref": "#/definitions/provisioners/ansibleRemoteProvisioner" },
-                    { "$ref": "#/definitions/provisioners/fileProvisioner" },
-                    { "$ref": "#/definitions/provisioners/localShellProvisioner" },
-                    { "$ref": "#/definitions/provisioners/remoteShellProvisioner" }
-                ] 
-            }
+            "description": "An array of one or more objects that define the provisioners that will be used to install and configure software for the machines created by each of the builders.",
+            "items": { "$ref": "#/definitions/provisioner" },
+            "type": "array"            
         },
         "variables": {
-            "type": "object",
-            "description": "An object of one or more key/value strings that defines user variables contained in the template."
+            "description": "An object of one or more key/value strings that defines user variables contained in the template.",
+            "type": "object"            
         }
-    }
+    },
+    "required": ["builders"],    
+    "title": "JSON schema for Packer template files",
+    "type": "object"
 }
