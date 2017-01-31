@@ -408,7 +408,7 @@
                 }
             }
         },
-        "provionser": {
+        "provisioner": {
             "anyOf": [
                 { "$ref": "#/definitions/provisioners/ansibleLocalProvisioner" },
                 { "$ref": "#/definitions/provisioners/ansibleRemoteProvisioner" },
