@@ -60,7 +60,7 @@
                         "type": "string",
                         "description": "Azure datacenter in which your VM will build."
                     },
-                    "resource_group": {
+                    "resource_group_name": {
                         "type": "string",
                         "description": "Resource group under which the final artifact will be stored."
                     },
@@ -72,6 +72,11 @@
                         "type": "string",
                         "description": "Subscription under which the build will be performed."
                     },
+                    "os_type": {
+                        "type": "string",
+                        "description": "If either Linux or Windows is specified Packer will automatically configure authentication credentials for the provisioned machine. For Linux this configures an SSH authorized key. For Windows this configures a WinRM certificate.",
+                        "enum": ["Linux", "Windows"]
+                    },
                     "tenant_id": {
                         "type": "string",
                         "description": "The account identifier with which your client_id and subscription_id are associated. If not specified, tenant_id will be looked up using subscription_id."
@@ -79,7 +84,7 @@
                     "type": {
                         "type": "string",
                         "description": "Builder for creating an Azure VHD",
-                        "enum": ["azure"]
+                        "enum": ["azure-arm"]
                     },
                     "virtual_network_name": {
                         "type": "string",
