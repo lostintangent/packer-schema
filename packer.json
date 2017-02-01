@@ -13,7 +13,7 @@
                 "description": "Builder for creating an Azure VHD",
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["capture_container_name", "capture_name_prefix", "client_id", "client_secret", "image_offer", "image_publisher", "image_sku", "location", "resource_group", "storage_account", "subscription_id"],
+                "required": ["capture_container_name", "capture_name_prefix", "client_id", "client_secret", "image_offer", "image_publisher", "image_sku", "location", "os_type", "resource_group", "storage_account", "subscription_id"],
                 "properties": {
                     "capture_container_name": {
                         "type": "string",
