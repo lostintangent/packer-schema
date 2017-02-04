@@ -1,21 +1,56 @@
 {  
     "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "JSON schema for Packer template files",    
+    "required": ["builders"],
+    "properties": {
+        "builders": {
+            "description": "An array of one or more objects that define the builders that will be used to create machine images for this template, and configures each of those builders.",
+            "items": { "$ref": "#/definitions/builder" },            
+            "minItems": 1,
+            "type": "array",            
+            "uniqueItems": true
+        },
+        "description": {
+            "description": "A string providing a description of what the template does.",
+            "type": "string"            
+        },
+        "min_packer_version": {
+            "description": "A string that has a minimum Packer version that is required to parse the template.",
+            "type": "string"
+        },
+        "post-processors": {
+            "description": "An array of one or more objects that define the various post-processing steps to take with the built images.",
+            "items": {
+                "anyOf": [
+                    { "type": "string", "enum": ["checksum", "compress", "docker-import", "docker-push", "docker-save", "docker-tag", "shell-local"] },
+                    { "$ref": "#/definitions/postProcessor" },
+                    { "type": "array", "items": { "$ref": "#/definitions/postProcessor" } }
+                ]
+            },
+            "type": "array"            
+        },
+        "provisioners": {
+            "description": "An array of one or more objects that define the provisioners that will be used to install and configure software for the machines created by each of the builders.",
+            "items": { "$ref": "#/definitions/provisioner" },
+            "type": "array"            
+        },
+        "variables": {
+            "description": "An object of one or more key/value strings that defines user variables contained in the template."
+        }
+    },
     "definitions": {
         "builder": {
             "allOf": [
                 {
-                    "description": "Global properties for all builder types",
-                    "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                         "name": {
                             "type": "string",
-                            "description": "The name of the builder, which can be used to exclude/include it from a specific provisioner."
+                            "description": "The name of this builder instance, which can be specified in the only/except property of a provisioner."
                         }
                     }
                 },
                 {
-                    "anyOf": [
+                    "oneOf": [
                         { "$ref": "#/definitions/builders/azureBuilder" },
                         { "$ref": "#/definitions/builders/digitalOceanBuilder" },
                         { "$ref": "#/definitions/builders/dockerBuilder" }                                
@@ -26,9 +61,7 @@
         "builders": {
             "azureBuilder": {
                 "description": "Builder for creating an Azure VHD",
-                "type": "object",
-                "additionalProperties": false,
-                "required": ["capture_container_name", "capture_name_prefix", "image_offer", "image_publisher", "image_sku", "location", "os_type", "resource_group_name", "storage_account", "subscription_id"],
+                "required": ["capture_container_name", "capture_name_prefix", "image_offer", "image_publisher", "image_sku", "location", "os_type", "resource_group_name", "storage_account", "subscription_id", "type"],
                 "properties": {
                     "capture_container_name": {
                         "type": "string",
@@ -88,9 +121,12 @@
                         "description": "Subscription under which the build will be performed."
                     },
                     "os_type": {
-                        "type": "string",
-                        "description": "If either Linux or Windows is specified Packer will automatically configure authentication credentials for the provisioned machine. For Linux this configures an SSH authorized key. For Windows this configures a WinRM certificate.",
-                        "enum": ["Linux", "Windows"]
+                        "type": "string",                        
+                        "description": "If either Linux or Windows is specified Packer will automatically configure authentication credentials for the provisioned machine. For Linux this configures an SSH authorized key. For Windows this configures a WinRM certificate.",                        
+                        "oneOf": [
+                            { "enum": ["Linux", "Windows"] }, 
+                            { "pattern": "{{\\s*user\\s*`\\w+`\\s*}}" }
+                        ]
                     },
                     "tenant_id": {
                         "type": "string",
@@ -121,8 +157,6 @@
             },
             "digitalOceanBuilder": {
                 "description": "Builder for creating a DigitalOcean droplets",
-                "type": "object",
-                "additionalProperties": false,
                 "required": ["api_token", "image", "region", "size", "type"],
                 "properties": {
                     "api_token": {
@@ -188,8 +222,6 @@
             },
             "dockerBuilder": {
                 "description": "Builder for creating a Docker image.",
-                "type": "object",
-                "additionalProperties": false,
                 "required": ["type"],
                 "properties": {
                     "author": {
@@ -291,7 +323,7 @@
             }
         },
         "postProcessor": {
-            "anyOf": [
+            "oneOf": [
                 { "$ref": "#/definitions/postProcessors/checksumPostProcessor" },
                 { "$ref": "#/definitions/postProcessors/compressPostProcessor" },
                 { "$ref": "#/definitions/postProcessors/dockerImportPostProcessor" },
@@ -304,7 +336,6 @@
         "postProcessors": {
             "checksumPostProcessor": {
                 "description": "Post-processor for computing a checksum for your built artifacts.",
-                "type": "object",
                 "additionalProperties": false,
                 "required": ["type"],
                 "properties": {
@@ -329,7 +360,6 @@
             },
             "compressPostProcessor": {
                 "description": "Post-processor for compressing your built artifacts.",
-                "type": "object",
                 "additionalProperties": false,
                 "required": ["type"],
                 "properties": {
@@ -360,7 +390,6 @@
             },
             "dockerImportPostProcessor": {
                 "description": "Post-processor for importing an exported Docker image in order to run other post-processors on it.",
-                "type": "object",
                 "additionalProperties": false,
                 "required": ["repository", "type"],
                 "properties": {
@@ -381,7 +410,6 @@
             },
             "dockerPushPostProcessor": {
                 "description": "Post-processor for pushing a Docker image to a remote registry.",
-                "type": "object",
                 "additionalProperties": false,
                 "required": ["type"],
                 "properties": {
@@ -432,7 +460,6 @@
             },
             "dockerSavePostProcessor": {
                 "description": "Post-processor for exporting a committed Docker image to a file.",
-                "type": "object",
                 "additionalProperties": false,
                 "required": ["path", "type"],
                 "properties": {
@@ -449,7 +476,6 @@
             },
             "dockerTagPostProcessor": {
                 "description": "Post-processor for tagging a committed Docker image.",
-                "type": "object",
                 "additionalProperties": false,
                 "required": ["repository", "type"],
                 "properties": {
@@ -474,7 +500,6 @@
             },
             "localShellPostProcessor": {
                 "description": "Post-processor for running a local shell script.",
-                "type": "object",
                 "additionalProperties": false,
                 "required": ["type"],
                 "properties": {
@@ -522,9 +547,6 @@
         "provisioner": {
             "allOf": [
                 {
-                    "description": "Global properties for all provisioner types",
-                    "type": "object",
-                    "additionalProperties": false,
                     "properties": {
                         "except": {
                             "type": "array",
@@ -543,7 +565,7 @@
                     }
                 },
                 {
-                    "anyOf": [
+                    "oneOf": [
                         { "$ref": "#/definitions/provisioners/ansibleLocalProvisioner" },
                         { "$ref": "#/definitions/provisioners/ansibleRemoteProvisioner" },
                         { "$ref": "#/definitions/provisioners/fileProvisioner" },
@@ -556,8 +578,6 @@
         "provisioners": {
             "ansibleLocalProvisioner": {
                 "description": "Provisioner for running an Ansible playbook via local mode.",
-                "type": "object",
-                "additionalProperties": false,
                 "required": ["playbook_file", "type"],
                 "properties": {
                     "command": {
@@ -627,8 +647,6 @@
             },
             "ansibleRemoteProvisioner": {
                 "description": "Provisioner for running an Ansible playbook via SSH/remote mode.",
-                "type": "object",
-                "additionalProperties": false,
                 "required": ["playbook_file", "type"],
                 "properties": {
                     "ansible_env_vars": {
@@ -702,8 +720,6 @@
             },
             "fileProvisioner": {
                 "description": "Provisioner for uploading/downloading files.",
-                "type": "object",
-                "additionalProperties": false,
                 "required": ["destination", "source", "type"],
                 "properties": {
                     "destination": {
@@ -729,8 +745,6 @@
             },
             "localShellProvisioner": {
                 "description": "Provisioner for running local shell scripts.",
-                "type": "object",
-                "additionalProperties": false,
                 "required": ["command", "type"],
                 "properties": {
                     "command": {
@@ -751,10 +765,8 @@
             },
             "remoteShellProvisioner": {
                 "description": "Provisioner for running remote shell scripts.",
-                "type": "object",
-                "additionalProperties": false,
                 "required": ["type"],
-                "oneOf": [{ "required": ["script"] }, { "required": ["inline"] }],
+                "anyOf": [{ "required": ["script"] }, { "required": ["inline"] }],
                 "properties": {
                     "binary": {
                         "type": "boolean",
@@ -777,11 +789,16 @@
                         "default": true
                     },
                     "inline": {
-                        "type": "array",
                         "description": "This is an array of commands to execute.",
-                        "items": {
-                            "type": "string"
-                        }
+                        "oneOf": [
+                            { "type": "string" },
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        ]                        
                     },
                     "inline_shebang": {
                         "type": "string",
@@ -829,45 +846,5 @@
                 }
             }
         }
-    },
-    "properties": {
-        "builders": {
-            "description": "An array of one or more objects that define the builders that will be used to create machine images for this template, and configures each of those builders.",
-            "items": { "$ref": "#/definitions/builder" },            
-            "minItems": 1,
-            "type": "array",            
-            "uniqueItems": true
-        },
-        "description": {
-            "description": "A string providing a description of what the template does.",
-            "type": "string"            
-        },
-        "min_packer_version": {
-            "description": "A string that has a minimum Packer version that is required to parse the template.",
-            "type": "string"
-        },
-        "post-processors": {
-            "description": "An array of one or more objects that define the various post-processing steps to take with the built images.",
-            "items": {
-                "anyOf": [
-                    { "type": "string", "enum": ["checksum", "compress", "docker-import", "docker-push", "docker-save", "docker-tag", "shell-local"] },
-                    { "$ref": "#/definitions/postProcessor" },
-                    { "type": "array", "items": { "$ref": "#/definitions/postProcessor" } }
-                ]
-            },
-            "type": "array"            
-        },
-        "provisioners": {
-            "description": "An array of one or more objects that define the provisioners that will be used to install and configure software for the machines created by each of the builders.",
-            "items": { "$ref": "#/definitions/provisioner" },
-            "type": "array"            
-        },
-        "variables": {
-            "description": "An object of one or more key/value strings that defines user variables contained in the template.",
-            "type": "object"            
-        }
-    },
-    "required": ["builders"],    
-    "title": "JSON schema for Packer template files",
-    "type": "object"
+    }
 }
