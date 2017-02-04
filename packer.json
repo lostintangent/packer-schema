@@ -2,10 +2,25 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "definitions": {
         "builder": {
-            "anyOf": [
-                { "$ref": "#/definitions/builders/azureBuilder" },
-                { "$ref": "#/definitions/builders/digitalOceanBuilder" },
-                { "$ref": "#/definitions/builders/dockerBuilder" }                                
+            "allOf": [
+                {
+                    "description": "Global properties for all builder types",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The name of the builder, which can be used to exclude/include it from a specific provisioner."
+                        }
+                    }
+                },
+                {
+                    "anyOf": [
+                        { "$ref": "#/definitions/builders/azureBuilder" },
+                        { "$ref": "#/definitions/builders/digitalOceanBuilder" },
+                        { "$ref": "#/definitions/builders/dockerBuilder" }                                
+                    ]
+                }
             ]
         },
         "builders": {
@@ -505,13 +520,38 @@
             }
         },
         "provisioner": {
-            "anyOf": [
-                { "$ref": "#/definitions/provisioners/ansibleLocalProvisioner" },
-                { "$ref": "#/definitions/provisioners/ansibleRemoteProvisioner" },
-                { "$ref": "#/definitions/provisioners/fileProvisioner" },
-                { "$ref": "#/definitions/provisioners/localShellProvisioner" },
-                { "$ref": "#/definitions/provisioners/remoteShellProvisioner" }
-            ] 
+            "allOf": [
+                {
+                    "description": "Global properties for all provisioner types",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "except": {
+                            "type": "array",
+                            "description": "Specify the name of builds that this provisioner shouldn't run for.",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "only": {
+                            "type": "array",
+                            "description": "Specify the name of builds that this provisioner should only run for.",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                {
+                    "anyOf": [
+                        { "$ref": "#/definitions/provisioners/ansibleLocalProvisioner" },
+                        { "$ref": "#/definitions/provisioners/ansibleRemoteProvisioner" },
+                        { "$ref": "#/definitions/provisioners/fileProvisioner" },
+                        { "$ref": "#/definitions/provisioners/localShellProvisioner" },
+                        { "$ref": "#/definitions/provisioners/remoteShellProvisioner" }
+                    ] 
+                }
+            ]
         },
         "provisioners": {
             "ansibleLocalProvisioner": {
